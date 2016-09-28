@@ -314,38 +314,38 @@ foreign import ccall "GRBsetstrattrlist" setStrAttrList :: ModelHandle -> CStrin
 --Monitoring Progress - Logging and Callbacks
 
 -- msg
--- foreign import ccall "GRBmsg" msg :: IO ()
+foreign import ccall "GRBmsg" msg :: EnvHandle -> CString -> IO ()
 
 -- setcallbackfunc
--- foreign import ccall "GRBsetcallbackfunc" setcallbackfunc :: IO ()
+foreign import ccall "GRBsetcallbackfunc" setCallbackFunc :: ModelHandle -> FunPtr (ModelHandle -> Ptr () -> CInt -> Ptr () -> IO CInt) -> Ptr () -> IO CInt
 
 -- getcallbackfunc
--- foreign import ccall "GRBgetcallbackfunc" getcallbackfunc :: IO ()
+foreign import ccall "GRBgetcallbackfunc" getCallbackFunc :: ModelHandle -> Ptr (FunPtr (ModelHandle -> Ptr () -> CInt -> Ptr () -> IO CInt)) -> IO CInt
 
 -- cbget
--- foreign import ccall "GRBcbget" cbget :: IO ()
+foreign import ccall "GRBcbget" cbGet :: Ptr () -> CInt -> CInt -> Ptr () -> IO CInt
 
 -- version
--- foreign import ccall "GRBversion" version :: IO ()
+foreign import ccall "GRBversion" version :: Ptr CInt -> Ptr CInt -> Ptr CInt -> IO ()
 
 --Modifying Solver Behavior - Callbacks
 
 -- cbcut
--- foreign import ccall "GRBcbcut" cbcut :: IO ()
+foreign import ccall "GRBcbcut" cbCut :: Ptr () -> CInt -> Ptr CInt -> Ptr CDouble -> CChar -> CDouble -> IO CInt
 
 -- cblazy
--- foreign import ccall "GRBcblazy" cblazy :: IO ()
+foreign import ccall "GRBcblazy" cbLazy :: Ptr () -> CInt -> Ptr CInt -> Ptr CDouble -> CChar -> CDouble -> IO CInt
 
 -- cbsolution
--- foreign import ccall "GRBcbsolution" cbsolution :: IO ()
+foreign import ccall "GRBcbsolution" cbSolution :: Ptr () -> Ptr CDouble -> IO CInt
 
 -- terminate
--- foreign import ccall "GRBterminate" terminate :: IO ()
+foreign import ccall "GRBterminate" terminate :: ModelHandle -> IO ()
 
 --Error Handling
 
 -- geterrormsg
--- foreign import ccall "GRBgeterrormsg" geterrormsg :: IO ()
+foreign import ccall "GRBgeterrormsg" geterrormsg :: EnvHandle -> IO CString
 
 --Advanced simplex routines
 

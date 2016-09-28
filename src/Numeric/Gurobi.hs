@@ -1,5 +1,5 @@
 module Numeric.Gurobi where
 import BasicPrelude
-import Numeric.Gurobi.C
+import qualified Numeric.Gurobi.C as C
 
 main = ()
