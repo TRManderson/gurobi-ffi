@@ -1,11 +1,5 @@
-module Lib
-    ( loadEnv
-    ) where
+module Numeric.Gurobi where
+import BasicPrelude
+import Numeric.Gurobi.C
 
-import Numeric.Gurobi.C as C
-import Numeric.Gurobi
-
-
-
-loadEnv :: String -> IO Env
-loadEnv logfilename = undefined
+main = ()

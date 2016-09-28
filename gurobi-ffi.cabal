@@ -17,10 +17,12 @@ library
   hs-source-dirs:      src
   exposed-modules:     Numeric.Gurobi
                      , Numeric.Gurobi.Types
-  build-tools:         c2hs
-  build-depends:       base >= 4.7 && < 5
+  -- build-tools:         c2hs
   default-language:    Haskell2010
   extra-libraries:     gurobi65
+  build-depends:       base >= 4.7 && < 5
+                     , basic-prelude
+                     , transformers
 
 source-repository head
   type:     git
