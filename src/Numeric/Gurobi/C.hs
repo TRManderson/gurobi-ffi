@@ -102,51 +102,51 @@ foreign import ccall "GRBaddvars" addVars :: ModelHandle -> CInt -> CInt -> Ptr 
 -- foreign import ccall "GRBsetpwlobj" setpwlobj :: IO ()
 
 -- updatemodel
--- foreign import ccall "GRBupdatemodel" updatemodel :: IO ()
+foreign import ccall "GRBupdatemodel" updateModel :: ModelHandle -> IO CInt
 
 -- freemodel
--- foreign import ccall "GRBfreemodel" freemodel :: IO ()
+foreign import ccall "GRBfreemodel" freeModel :: ModelHandle -> IO CInt
 
 
 --Model Solution
 
 -- optimize
--- foreign import ccall "GRBoptimize" optimize :: IO ()
+foreign import ccall "GRBoptimize" optimize :: ModelHandle -> IO ()
 
 -- optimizeasync
--- foreign import ccall "GRBoptimizeasync" optimizeasync :: IO ()
+foreign import ccall "GRBoptimizeasync" optimizeAsync :: ModelHandle -> IO ()
 
 -- computeIIS
 -- foreign import ccall "GRBcomputeiis" computeIIS :: IO ()
 
 -- feasrelax
--- foreign import ccall "GRBfeasrelax" feasrelax :: IO ()
+-- foreign import ccall "GRBfeasrelax" feasRelax :: IO ()
 
 -- fixedmodel
--- foreign import ccall "GRBfixedmodel" fixedmodel :: IO ()
+foreign import ccall "GRBfixedmodel" fixedModel :: ModelHandle -> IO ModelHandle
 
 -- resetmodel
--- foreign import ccall "GRBresetmodel" resetmodel :: IO ()
+foreign import ccall "GRBresetmodel" resetModel :: ModelHandle -> IO ()
 
 -- sync
--- foreign import ccall "GRBsync" sync :: IO ()
+foreign import ccall "GRBsync" sync :: ModelHandle -> IO ()
 
 --Model Queries
 
 -- getcoeff
--- foreign import ccall "GRBgetcoeff" getcoeff :: IO ()
+foreign import ccall "GRBgetcoeff" getCoeff :: ModelHandle -> CInt -> CInt -> Ptr CDouble -> IO CInt
 
 -- getconstrbyname
--- foreign import ccall "GRBgetconstrbyname" getconstrbyname :: IO ()
+foreign import ccall "GRBgetconstrbyname" getConstrByName :: ModelHandle -> CString -> Ptr CInt -> IO CInt
 
 -- getconstrs
--- foreign import ccall "GRBgetconstrs" getconstrs :: IO ()
+foreign import ccall "GRBgetconstrs" getConstrs :: ModelHandle -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CDouble -> CInt -> CInt -> IO CInt
 
 -- Xgetconstrs
 -- foreign import ccall "GRBXgetconstrs" getconstrs_st :: IO ()
 
 -- getenv
--- foreign import ccall "GRBgetenv" getenv :: IO ()
+foreign import ccall "GRBgetenv" getEnv :: ModelHandle -> IO EnvHandle
 
 -- getpwlobj
 -- foreign import ccall "GRBgetpwlobj" getpwlobj :: IO ()
@@ -161,10 +161,10 @@ foreign import ccall "GRBaddvars" addVars :: ModelHandle -> CInt -> CInt -> Ptr 
 -- foreign import ccall "GRBgetsos" getsos :: IO ()
 
 -- getvarbyname
--- foreign import ccall "GRBgetvarbyname" getvarbyname :: IO ()
+foreign import ccall "GRBgetvarbyname" getVarByName :: ModelHandle -> CString -> Ptr CInt -> IO CInt
 
 -- getvars
--- foreign import ccall "GRBgetvars" getvars :: IO ()
+foreign import ccall "GRBgetvars" getVars :: ModelHandle -> Ptr CInt -> Ptr CInt -> Ptr CInt -> Ptr CDouble -> CInt -> CInt -> IO CInt
 
 -- Xgetvars
 -- foreign import ccall "GRBXgetvars" getvars_st :: IO ()
@@ -172,108 +172,103 @@ foreign import ccall "GRBaddvars" addVars :: ModelHandle -> CInt -> CInt -> Ptr 
 --Input/Output
 
 -- readmodel
--- foreign import ccall "GRBreadmodel" readmodel :: IO ()
+foreign import ccall "GRBreadmodel" readModel :: EnvHandle -> CString -> Ptr ModelHandle -> IO CInt
 
 -- read
--- foreign import ccall "GRBread" read :: IO ()
+foreign import ccall "GRBread" read :: ModelHandle -> CString -> IO CInt
 
 -- write
--- foreign import ccall "GRBwrite" write :: IO ()
+foreign import ccall "GRBwrite" write :: ModelHandle -> CString -> IO CInt
 
 --Attribute Management
 
 -- getattrinfo
--- foreign import ccall "GRBgetattrinfo" getattrinfo :: IO ()
+foreign import ccall "GRBgetattrinfo" getAttrInfo :: ModelHandle -> CString -> Ptr CInt -> Ptr CInt -> Ptr CInt -> IO CInt
 
 -- getintattr
--- foreign import ccall "GRBgetintattr" getintattr :: IO ()
+foreign import ccall "GRBgetintattr" getIntAttr :: ModelHandle -> CString -> Ptr CInt -> IO CInt
 
 -- setintattr
--- foreign import ccall "GRBsetintattr" setintattr :: IO ()
+foreign import ccall "GRBsetintattr" setIntAttr :: ModelHandle -> CString -> CInt -> IO CInt
 
 -- getintattrelement
--- foreign import ccall "GRBgetintattrelement" getintattrelement :: IO ()
+foreign import ccall "GRBgetintattrelement" getIntAttrElement :: ModelHandle -> CString -> CInt -> CInt -> Ptr CInt -> IO CInt
 
 -- setintattrelement
--- foreign import ccall "GRBsetintattrelement" setintattrelement :: IO ()
+foreign import ccall "GRBsetintattrelement" setintattrElement :: ModelHandle -> CString -> CInt -> CInt -> IO CInt
 
 -- getintattrarray
--- foreign import ccall "GRBgetintattrarray" getintattrarray :: IO ()
+foreign import ccall "GRBgetintattrarray" getIntAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CInt -> IO CInt
 
 -- setintattrarray
--- foreign import ccall "GRBsetintattrarray" setintattrarray :: IO ()
+foreign import ccall "GRBsetintattrarray" setIntAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CInt -> IO CInt
 
 -- getintattrlist
--- foreign import ccall "GRBgetintattrlist" getintattrlist :: IO ()
+foreign import ccall "GRBgetintattrlist" getIntAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CInt -> IO CInt
 
 -- setintattrlist
--- foreign import ccall "GRBsetintattrlist" setintattrlist :: IO ()
+foreign import ccall "GRBsetintattrlist" setIntAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CInt -> IO CInt
 
 -- getdblattr
--- foreign import ccall "GRBgetdblattr" getdblattr :: IO ()
+foreign import ccall "GRBgetdblattr" getDblAttr :: ModelHandle -> CString -> Ptr CDouble -> IO CInt
 
 -- setdblattr
--- foreign import ccall "GRBsetdblattr" setdblattr :: IO ()
+foreign import ccall "GRBsetdblattr" setDblAttr :: ModelHandle -> CString -> CDouble -> IO CInt
 
 -- getdblattrelement
--- foreign import ccall "GRBgetdblattrelement" getdblattrelement :: IO ()
+foreign import ccall "GRBgetdblattrelement" getDblAttrElement :: ModelHandle -> CString -> CInt -> CInt -> Ptr CDouble -> IO CInt
 
 -- setdblattrelement
--- foreign import ccall "GRBsetdblattrelement" setdblattrelement :: IO ()
+foreign import ccall "GRBsetdblattrelement" setDblattrElement :: ModelHandle -> CString -> CInt -> CDouble -> IO CInt
 
 -- getdblattrarray
--- foreign import ccall "GRBgetdblattrarray" getdblattrarray :: IO ()
+foreign import ccall "GRBgetdblattrarray" getDblAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CDouble -> IO CInt
 
 -- setdblattrarray
--- foreign import ccall "GRBsetdblattrarray" setdblattrarray :: IO ()
+foreign import ccall "GRBsetdblattrarray" setDblAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CDouble -> IO CInt
 
 -- getdblattrlist
--- foreign import ccall "GRBgetdblattrlist" getdblattrlist :: IO ()
+foreign import ccall "GRBgetdblattrlist" getDblAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CDouble -> IO CInt
 
 -- setdblattrlist
--- foreign import ccall "GRBsetdblattrlist" setdblattrlist :: IO ()
+foreign import ccall "GRBsetdblattrlist" setDblAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CDouble -> IO CInt
 
 -- getcharattrelement
--- foreign import ccall "GRBgetcharattrelement" getcharattrelement :: IO ()
+foreign import ccall "GRBgetcharattrelement" getCharAttrElement :: ModelHandle -> CString -> CInt -> CInt -> Ptr CChar -> IO CInt
 
 -- setcharattrelement
--- foreign import ccall "GRBsetcharattrelement" setcharattrelement :: IO ()
+foreign import ccall "GRBsetcharattrelement" setCharattrElement :: ModelHandle -> CString -> CInt -> CChar -> IO CInt
 
 -- getcharattrarray
--- foreign import ccall "GRBgetcharattrarray" getcharattrarray :: IO ()
+foreign import ccall "GRBgetcharattrarray" getCharAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CChar -> IO CInt
 
 -- setcharattrarray
--- foreign import ccall "GRBsetcharattrarray" setcharattrarray :: IO ()
+foreign import ccall "GRBsetcharattrarray" setCharAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CChar -> IO CInt
 
 -- getcharattrlist
--- foreign import ccall "GRBgetcharattrlist" getcharattrlist :: IO ()
+foreign import ccall "GRBgetcharattrlist" getCharAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CChar -> IO CInt
 
 -- setcharattrlist
--- foreign import ccall "GRBsetcharattrlist" setcharattrlist :: IO ()
-
--- getstrattr
--- foreign import ccall "GRBgetstrattr" getstrattr :: IO ()
-
--- setstrattr
--- foreign import ccall "GRBsetstrattr" setstrattr :: IO ()
+foreign import ccall "GRBsetcharattrlist" setCharAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CChar -> IO CInt
 
 -- getstrattrelement
--- foreign import ccall "GRBgetstrattrelement" getstrattrelement :: IO ()
+foreign import ccall "GRBgetstrattrelement" getStrAttrElement :: ModelHandle -> CString -> CInt -> CInt -> Ptr CString -> IO CInt
 
 -- setstrattrelement
--- foreign import ccall "GRBsetstrattrelement" setstrattrelement :: IO ()
+foreign import ccall "GRBsetstrattrelement" setStrAttrElement :: ModelHandle -> CString -> CInt -> CString -> IO CInt
 
 -- getstrattrarray
--- foreign import ccall "GRBgetstrattrarray" getstrattrarray :: IO ()
+foreign import ccall "GRBgetstrattrarray" getStrAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CString -> IO CInt
 
 -- setstrattrarray
--- foreign import ccall "GRBsetstrattrarray" setstrattrarray :: IO ()
+foreign import ccall "GRBsetstrattrarray" setStrAttrArray :: ModelHandle -> CString -> CInt -> CInt -> Ptr CString -> IO CInt
 
 -- getstrattrlist
--- foreign import ccall "GRBgetstrattrlist" getstrattrlist :: IO ()
+foreign import ccall "GRBgetstrattrlist" getStrAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CString -> IO CInt
 
 -- setstrattrlist
--- foreign import ccall "GRBsetstrattrlist" setstrattrlist :: IO ()
+foreign import ccall "GRBsetstrattrlist" setStrAttrList :: ModelHandle -> CString -> CInt -> Ptr CInt -> Ptr CString -> IO CInt
+
 
 --Parameter Management and Tuning
 
