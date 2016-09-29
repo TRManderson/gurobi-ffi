@@ -27,3 +27,26 @@ loadEnv logFileName = do
       Just env -> return . Env $ env
       Nothing -> throwE NotImplementedError
     _ -> throwE NotImplementedError
+
+loadClientEnv :: String -> [String] -> Int -> String -> Int -> Double -> IO Env
+loadClientEnv logFile computeServers port password priority timeout = undefined
+
+freeEnv :: Env -> IO ()
+freeEnv (Env e) = C.freeEnv e
+
+getConcurrentEnv :: Model -> Int -> IO (Maybe Env)
+getConcurrentEnv (Model m) num = do
+  result <- C.getConcurrentEnv m (fromIntegral num)
+  return $ case (result) of
+    nullPtr -> Nothing
+    _       -> Just (Env result)
+
+discardConcurrentEnvs :: Model -> IO ()
+discardConcurrentEnvs (Model m) = C.discardConcurrentEnvs m
+
+loadModel :: Env -> String -> Int -> Int -> ObjectiveSense -> Double -> [Double] -> [ConstraintSense] -> [Double] -> [Int] -> [Int] -> [Int] -> [Double] -> [Double] -> [Double] -> [VariableType] -> [String] -> [String] -> Gurobi Model
+loadModel (Env env) name numVars numConstrs objSense objOffset objCoeffs constrSenses constrRHS vBeg vLen vVal lbs ubs vtypes varnames constrnames = undefined
+
+newModel :: Env -> String -> [Variable] -> Gurobi Model
+newModel (Env e) name vars = do
+  return undefined
