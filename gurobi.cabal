@@ -16,8 +16,11 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Gurobi
+  other-modules:       Gurobi.Internal
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
+  extra-lib-dirs:      D:\gurobi702\win64\lib
+  include-dirs:        D:\gurobi702\win64\include
 
 source-repository head
   type:     git

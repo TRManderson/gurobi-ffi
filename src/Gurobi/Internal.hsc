@@ -5,4 +5,7 @@ module Gurobi.Internal where
 import Foreign
 import Foreign.C.Types
 
-#include <gurobi.h>
+x = 2
+
+#include <gurobi_c.h>
+
