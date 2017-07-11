@@ -1,0 +1,24 @@
+name:                gurobi
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/TRManderson/gurobi-ffi#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Tom Manderson
+maintainer:          me@trm.io
+copyright:           2017 Tom Manderson
+category:            Mathematics,Optimisation
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Gurobi
+  build-depends:       base >= 4.7 && < 5
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/TRManderso/gurobi-ffi
