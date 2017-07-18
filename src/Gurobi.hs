@@ -2,7 +2,8 @@ module Gurobi
     ( someFunc
     ) where
 
-import Gurobi.Internal (x)
+import Gurobi.Internal
+
 
 someFunc :: IO ()
-someFunc = putStrLn $ "someFunc" ++ show x
+someFunc = putStrLn $ "someFunc"
