@@ -1,17 +1,20 @@
-{-# LANGUAGE CPP, ForeignFunctionInterface, GADTs #-}
+{-# LANGUAGE CPP, ForeignFunctionInterface, GADTs, MultiParamTypeClasses #-}
 
 module Gurobi.Internal where
 
 import Foreign
 import Foreign.C.Types
 import Foreign.C.String
+import Control.Concurrent.MVar
+import Control.Monad.Trans.Class
+import Control.Monad.Trans.Except
 
 #let STORABLE hstype,ctype,toC,fromC = "\
-instance Storable " hstype " where\n\
+instance Storable (" hstype ") where\n\
   sizeOf _ = sizeOf (undefined :: " ctype ")\n\
   alignment _ = alignment (undefined :: " ctype ")\n\
-  peek p = fmap " fromC " . peek $ (castPtr p :: Ptr " ctype ")\n\
-  poke p v = poke (castPtr p) ((" toC " v) ::" ctype " )"
+  peek p = fmap (" fromC ") . peek $ (castPtr p :: Ptr (" ctype "))\n\
+  poke p v = poke (castPtr p) ((" toC " $ v) :: " ctype " )"
 
 #include <gurobi_c.h>
 
@@ -61,6 +64,7 @@ data GurobiError = OutOfMemory
                  | NotInModel
                  | FailedToCreateModel
                  | Internal
+                 | OtherError CInt
 
 instance Bounded GurobiError where
     minBound = OutOfMemory
@@ -99,6 +103,7 @@ instance Enum GurobiError where
   fromEnum NotInModel = 20001
   fromEnum FailedToCreateModel = 20002
   fromEnum Internal = 20003
+  fromEnum (OtherError x) = fromEnum x
   toEnum 10001 = OutOfMemory
   toEnum 10002 = NullArgument
   toEnum 10003 = InvalidArgument
@@ -131,12 +136,13 @@ instance Enum GurobiError where
   toEnum 20001 = NotInModel
   toEnum 20002 = FailedToCreateModel
   toEnum 20003 = Internal
+  toEnum x = OtherError $ toEnum x
 
-#STORABLE "GurobiError","CInt","(toEnum.fromEnum)","(toEnum.fromEnum)"
+#STORABLE "GurobiError","CInt","toEnum.fromEnum","toEnum.fromEnum"
 
 newtype ConstraintSense = CS Ordering
 
-#STORABLE "ConstraintSense","CChar","(castCharToCChar.csToChar)","(charToCS.castCCharToChar)"
+#STORABLE "ConstraintSense","CChar","castCharToCChar.csToChar","charToCS.castCCharToChar"
 
 csToChar :: ConstraintSense -> Char
 csToChar (CS GT) = '>'
@@ -250,6 +256,64 @@ instance Enum AttributeDataType where
 
 #STORABLE "AttributeDataType","CInt","(toEnum.fromEnum)","(toEnum.fromEnum)"
 
-foreign import ccall "GRBgetattrinfo" getattrinfo :: GurobiModelP -> CString -> Ptr AttributeDataType -> Ptr AttributeType -> Ptr Bool -> IO CInt
+foreign import ccall "GRBgetattrinfo" c_getAttrInfo :: GurobiModelP -> CString -> Ptr AttributeDataType -> Ptr AttributeType -> Ptr Bool -> IO CInt
 
-foreign import ccall "GRBisattravailable" isattravailable :: GurobiModelP -> CString -> IO CInt
+foreign import ccall "GRBisattravailable" c_isAttrAvailable :: GurobiModelP -> CString -> IO CInt
+
+
+grbErrorReturn :: CInt -> (GurobiError -> a) -> (a) -> a
+grbErrorReturn x f s = case x of
+  0 -> s
+  x' -> f.toEnum.fromEnum $ x'
+
+foreign import ccall "GRBloadenv" c_loadEnv :: Ptr GurobiEnvP -> CString -> IO CInt
+loadEnv :: String -> ExceptT GurobiError IO GurobiEnvP
+loadEnv logFileName = ExceptT . alloca $ \ptr -> do
+  retval <- withCString logFileName (c_loadEnv ptr)
+  grbErrorReturn retval (pure.Left) (Right <$> peek ptr)
+
+
+foreign import ccall "GRBnewmodel" c_newModel :: GurobiEnvP -> Ptr GurobiModelP -> IO CInt
+newModel :: GurobiEnvP -> ExceptT GurobiError IO GurobiModelP
+newModel envP = ExceptT . alloca $ \ptr -> do
+  retval <- c_newModel envP ptr
+  grbErrorReturn retval (pure.Left) (Right <$> peek ptr)
+
+foreign import ccall "GRBaddvar" c_addVar :: GurobiModelP -> Int -> Ptr Int -> Ptr Double -> Double -> Double -> Double -> Char -> CString -> CInt
+-- addVar :: Model -> Variable ->
+
+newtype Model = Model { unModel :: MVar ModelData }
+newtype Variable = Variable { unVariable :: MVar VariableData }
+
+type GurobiM a = ExceptT GurobiError IO a
+
+addVar :: Model -> Variable -> GurobiM ()
+addVar (Model mref) (Variable vref) = do
+  (ModelData mp cc vc) <- mref
+  (VariableData lb ub vt n r)
+  let vtc = castCharToCChar . varTypeToChar $ vt
+  retval <- withCString n (\cname -> c_addVar mp 0 nullPtr nullPtr 0 lb ub vt vtc cname)
+  grbErrorReturn retval throwE (Right ())
+
+
+class Attrable a t where
+    getAttr :: a -> ExceptT GurobiError IO t
+    setAttr :: a -> t -> ExceptT GurobiError IO ()
+
+
+data VariableData = VariableData { lowerBound :: Double
+                                 , upperBound :: Double
+                                 , vtype :: VariableType
+                                 , name :: String
+                                 , ref :: Maybe Int
+                                 }
+
+
+data ModelData = ModelData { modelPtr :: GurobiModelP
+                       , constraintCounter :: Int
+                       , variableCounter :: Int
+                       }
+
+
+-- foreign import ccall "GRBaddconstr" c_addConstr
+
